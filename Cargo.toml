@@ -1,0 +1,22 @@
+[package]
+name = "indexer-revm"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+alloy-rlp = { version = "0.3.5", default-features = false, features = ["arrayvec", "derive"] }
+anyhow = "1.0.86"
+eth_trie = "0.4.0"
+ethers-providers = "2.0.14"
+hash-db = "0.15.0"
+hex = "0.4.3"
+plain_hasher = "0.2.3"
+postgres = "0.19.7"
+revm = { version = "10.0.0", features = ["ethersdb", "std", "serde-json"] }
+rlp = "0.5.2"
+serde = "1.0.203"
+serde_json = "1.0.117"
+tokio = "1.38.0"
+triehash = "0.8.4"
