@@ -307,7 +307,7 @@ async fn main() -> anyhow::Result<()> {
             if let Ok(r) = evm_result {
                 let revm::primitives::ResultAndState { result, state } = r;
 
-                // dbg!(&result);
+                dbg!(&result);
                 // dbg!(&state);
 
                 if result.is_success() {
