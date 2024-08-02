@@ -813,6 +813,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "evm-prototype"
+version = "0.1.0"
+dependencies = [
+ "alloy-rlp",
+ "anyhow",
+ "eth_trie",
+ "ethers-core",
+ "ethers-providers",
+ "hash-db",
+ "hex",
+ "log",
+ "plain_hasher",
+ "postgres",
+ "revm",
+ "rlp",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tokio-postgres",
+ "toml",
+ "triehash",
+]
+
+[[package]]
 name = "fallible-iterator"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1242,30 +1266,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 1.0.109",
-]
-
-[[package]]
-name = "indexer-revm"
-version = "0.1.0"
-dependencies = [
- "alloy-rlp",
- "anyhow",
- "eth_trie",
- "ethers-core",
- "ethers-providers",
- "hash-db",
- "hex",
- "log",
- "plain_hasher",
- "postgres",
- "revm",
- "rlp",
- "serde",
- "serde_json",
- "tokio",
- "tokio-postgres",
- "toml",
- "triehash",
 ]
 
 [[package]]

@@ -1,2 +1,4 @@
 /target
 config.toml
+Makefile.prod
+data

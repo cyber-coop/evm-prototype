@@ -229,19 +229,12 @@ async fn main() -> anyhow::Result<()> {
         println!("Finished query");
 
         let block_hash: Vec<u8> = block_row.get("hash");
-        println!("block_hash assigned");
         let number: i32 = block_row.get("number");
-        println!("number assigned");
         let coinbase: Vec<u8> = block_row.get("coinbase");
-        println!("coinbase assigned");
         let difficulty: i64 = block_row.get("difficulty");
-        println!("difficulty assigned");
         let gas_limit: i32 = block_row.get("gas_limit");
-        println!("gas_limit assigned");
         let time: i32 = block_row.get("time");
-        println!("time assigned");
         let state_root: Vec<u8> = block_row.get("state_root");
-        println!("state_root assigned");
 
         println!("Fetched block number: {}", number);
 
@@ -264,7 +257,7 @@ async fn main() -> anyhow::Result<()> {
         println!("Starting queries for transactions");
 
         let tx_rows = client.query(
-            "SELECT fromaddress, gas_limit, gas_price, value, data, nonce, toaddress
+            "SELECT fromaddress, gas_limit, CAST(gas_price AS TEXT), CAST(value AS TEXT), data, nonce, toaddress
            FROM ethereum_mainnet.transactions
            WHERE block = $1",
            &[&block_hash]).await.unwrap();
@@ -278,25 +271,18 @@ async fn main() -> anyhow::Result<()> {
                 .modify()
                 .modify_tx_env(|etx| {
                     etx.caller = caller;
-                    println!("caller assigned");
                     let gas_limit: i64 = tx.get("gas_limit");
                     etx.gas_limit = gas_limit as u64;
-                    println!("gas limit assigned");
-                    etx.gas_price = U256::from_le_slice(tx.get("gas_price"));
-                    println!("gas price assigned");
-                    etx.value = U256::from_le_slice(tx.get("value"));
-                    println!("value assigned");
+                    etx.gas_price = U256::from_str(tx.get("gas_price")).unwrap();
+                    etx.value = U256::from_str(tx.get("value")).unwrap();
                     etx.data = Bytes::copy_from_slice(tx.get("data"));
-                    println!("data assigned");
                     etx.nonce = None;
-                    println!("nonce set to none");
                     let to_address: Vec<u8> = tx.get("toaddress");
-                    println!("to_address assigned");
                     etx.transact_to = match to_address.is_empty() {
-                        true => {
+                        false => {
                             TransactTo::Call(Address::from_slice(&to_address))
                         }
-                        false => TransactTo::Create,
+                        true => TransactTo::Create,
                     };
                 })
                 .build();
@@ -311,18 +297,19 @@ async fn main() -> anyhow::Result<()> {
                 // dbg!(&state);
 
                 if result.is_success() {
-                    evm.db_mut().commit(state);
                     println!("Transaction sent");
                 } else {
                     println!("Transaction halted at block {}", number);
-                    evm.db_mut().commit(state);
                 }
+
+                evm.db_mut().commit(state);
 
                 // TODO: Check for CREATE2 opcode execution here
             } else {
                 println!("Transaction failed at block {}", number);
                 dbg!(&evm_result);
                 dbg!(&account);
+                dbg!(&caller);
                 // This shouldn't happen
                 evm_result.unwrap();
             }
